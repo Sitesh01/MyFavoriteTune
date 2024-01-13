@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favourite Tunes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #333;
+        }
+
+        h1 {
+            color: #009688;
+        }
+
+        ul {
+            display : flex;
+            flex-direction: column;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        #addSongModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        #addSongModal form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #addSongModal label {
+            margin-bottom: 10px;
+        }
+
+        #addSongModal input {
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        #addSongModal button {
+            padding: 10px;
+            background-color: #009688;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Favourite Tunes</h1>
+    <ul>
+        <% songs.forEach(song => { %>
+            <li><%= song.title %> by <%= song.artistname %></li>
+        <% }); %>
+    </ul>
+    <button onclick="openAddSongModal()">Add Song</button>
+
+    <!-- Modal -->
+    <div id="addSongModal">
+        <form>
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="artistname">Artist:</label>
+            <input type="text" id="artistname" name="artistname" required>
+
+            <button type="button" onclick="submitSong()">Submit</button>
+        </form>
+    </div>
+    <script>
+      function openAddSongModal() {
+          const modal = document.getElementById('addSongModal');
+          modal.style.display = 'block';
+      }
+
+      async function submitSong() {
+          // Get values from the form
+          const title = document.getElementById('title').value;
+          const artistname = document.getElementById('artistname').value;
+
+          // Perform any additional client-side validation if needed
+
+          // Assuming you have an endpoint to post the song data
+          await fetch('http://localhost:5000/songs', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ title, artistname }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              // Handle the response as needed
+              alert('Song added successfully:', data);
+              location.reload();
+          })
+          .catch(error => {
+              alert('Error adding song:', error);
+          });
+
+          // Close the modal after submitting
+          const modal = document.getElementById('addSongModal');
+          modal.style.display = 'none';
+      }
+  </script>
+</body>
+</html>
